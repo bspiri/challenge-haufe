@@ -1,0 +1,28 @@
+version: "3"
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+  nginx:
+    image: nginx
+    ports:
+      - "3000:80"
+    volumes:
+      # needs npm run build to be run to generate the static files
+      - ./app/build:/usr/share/nginx/html
+    depends_on:
+      - node
+  node: 
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    depends_on:
+      - mongo
+    volumes: 
+      - ./api:/api
+    ports: 
+      - "5000:5000"
